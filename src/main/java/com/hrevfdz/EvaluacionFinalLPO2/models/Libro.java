@@ -28,4 +28,5 @@ public class Libro implements Serializable {
     @ManyToOne
     @JoinColumn(name = "idGenero")
     private Genero genero;
+    private LocalDate fechaRegistro;
 }
