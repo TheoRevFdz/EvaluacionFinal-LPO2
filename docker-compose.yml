@@ -1,0 +1,59 @@
+version: "3.9"
+services:
+  postgresql15:
+    container_name: postgresql15
+    image: postgres:15.2-alpine
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: hrevilla
+      POSTGRES_PASSWORD: 1Vws8o6q
+      POSTGRES_DB: dbEvaluacionFinal
+    volumes:
+      - dbEvaluacionFinal:/var/lib/postgresql/data
+    restart: always
+    networks:
+      - spring
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "hrevillafdz@gmail.com"
+      PGADMIN_DEFAULT_PASSWORD: "admin"
+    ports:
+      - "8083:80"
+    restart: always
+    networks:
+      - spring
+    depends_on:
+      - postgresql15
+  evaluacion-final:
+    container_name: evaluacion-final
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    ports:
+      - "8084:8081"
+    environment:
+      PORT: 8081
+      DB_HOST: postgresql15
+      DB_PORT: 5432
+      DB_DATABASE: dbEvaluacionFinal
+      DB_USERNAME: hrevilla
+      DB_PASSWORD: 1Vws8o6q
+    networks:
+      - spring
+    depends_on:
+      - postgresql15
+    links:
+      - postgresql15
+    restart: always
+    expose:
+      - 8084
+
+volumes:
+  dbEvaluacionFinal:
+    name: dbEvaluacionFinal
+
+networks:
+  spring:
+    name: spring
